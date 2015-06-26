@@ -1,2 +1,0 @@
-# vdelia.github.io
-blogging
