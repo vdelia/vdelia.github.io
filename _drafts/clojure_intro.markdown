@@ -5,7 +5,7 @@ date:   2015-06-26 23:58:58
 categories: [clojure, intro]
 ---
 
-Pick your favorite answer on [Quora][quora], and don't forget that the most important one is that **Clojure is fun**.
+Why Clojure? Pick your favorite answer on [Quora][quora], and don't forget that the most important one is that **Clojure is fun**.
 
 About Lisp: yes, Clojure belongs to the glorious family of Lisp languages. Full stop. No more on this, because Common Lisp is completely different from Scheme, and the two have very little in common with Clojure.  
 
@@ -116,7 +116,7 @@ The most interesting part of the output is the first line. A server is running o
 
 In the REPL you can submit Clojure code for evaluation, get the results, and get the prompt back waiting for more input. This is the mechanism used by all IDEs  to give us an interactive environment.
 
-Want to see the `Hello world` message coming up?.
+Want to see the `Hello world` message coming up?
 If you are still in the REPL, run
 
 {% highlight bash %}
