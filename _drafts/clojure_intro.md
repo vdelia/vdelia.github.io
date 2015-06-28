@@ -205,7 +205,7 @@ This time, LightTable will evaluate every form in the editor file, and will add 
 
 ![LightTable instant repl editor]({{ site.url }}/assets/clj/light_instantrepl_editor.png)
 
-You can toggle this mode on/off simply by clicking on the live label on the top right of the window.
+You can toggle this mode on/off simply by clicking on the `live` label on the top right of the window.
 
 
 [lighttable]: http://lighttable.com
