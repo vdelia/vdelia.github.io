@@ -1,8 +1,14 @@
 ---
 layout: post
-title:  "Clojure"
+title:  "Getting Started with Clojure"
 date:   2015-06-26 23:58:58
 categories: [clojure, intro]
+permalink: /clojure/intro/
+tags:
+  - clojure
+  - install
+  - LightTable
+  - leiningen
 ---
 
 Why Clojure? Pick your favorite answer on [Quora][quora], and don't forget that the most important one is that **Clojure is fun**.
