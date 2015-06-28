@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Scala"
+title:  "Getting started with Scala"
 date:   2015-06-26 23:58:58
 categories: [scala, intro]
 ---
@@ -12,16 +12,27 @@ These are my notes on Scala.
 
 ## Install
 
-You need a JDK installed. I assume you have it.
+**You need a JDK installed. I assume you have it.**
 
-There is only one right way to be up and running, which works on every platform. It is **SBT**.
-
-Don't download anything, ignore your package manager and just to the [leiningen][lein] website.
+The simplest way to be up and running is [SBT][sbt].
 
 
 ### SBT
 
+SBT is the build tool and package manager for Scala. It allows you to ...
+
+On the [download page][sbt-download] you can find an installer for windows, and .tar.gz archives
+for other platforms. For Linux Ubuntu/Mint there are PPA repositories availables. For Mac `$ brew install sbt`
+just works fine. I suggest you to check the installation instructions [here][sbt-install].
+
+
+
+
+
 ### IntelliJ
 
+[sbt-install]: http://www.scala-sbt.org/release/tutorial/Setup.html
 [akka]: http://akka.io
 [spark]: https://spark.apache.org
+[sbt]: http://www.scala-sbt.org/
+[sbt-download]:  http://www.scala-sbt.org/download.html
