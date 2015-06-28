@@ -6,14 +6,14 @@ categories: [clojure, intro]
 permalink: /clojure/intro/
 tags:
   - clojure
-  - install
+  - how to install
   - LightTable
   - leiningen
 ---
 
 Why Clojure? Pick your favorite answer on [Quora][quora], and don't forget that the most important one is that **Clojure is fun**.
 
-About Lisp: yes, Clojure belongs to the glorious family of Lisp languages. Full stop. No more on this, because Common Lisp is completely different from Scheme, and the two have very little in common with Clojure.  
+About Lisp: yes, Clojure belongs to the glorious family of Lisp languages. Full stop. No more on this, because Common Lisp is completely different from Scheme, and the two have very little in common with Clojure.
 
 So, why is it fun?
 
@@ -35,7 +35,7 @@ These are my notes on Clojure, and these five points are also the TOC for this s
 
 ## Install
 
-You need a JDK installed. I assume you have it.
+**You need a JDK installed. I assume you have it.**
 
 There is only one right way to be up and running, which works on every platform. It is **Leiningen**.
 
@@ -45,7 +45,6 @@ Don't download anything, ignore your package manager and just to the [leiningen]
 ### Leiningen
 
 All you need is the [lein][lein-script] (or [lein.bat][lein-bat] if you are on Windows) script.
-Download it, and put it somewhere on your `PATH`.
 
 On Linux or Mac it could be something like
 
@@ -55,6 +54,14 @@ $ cd ~/bin
 $ wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
 $ export PATH=~/bin:$PATH
 {% endhighlight %}
+
+on Windows, download  `lein.bat`. Then open the command prompt, go in the directory containing the script
+and run
+
+{% highlight powershell %}
+$ lein.bat self-install
+{% endhighlight %}
+
 
 Leiningen is probably the most popular Clojure project. It is the Clojure package manager, and it takes care of
 
