@@ -11,7 +11,7 @@ tags:
   - leiningen
 ---
 
-Why Clojure? Pick your favorite answer on [Quora][quora], and don't forget that the most important one is that **Clojure is fun**.
+Why Clojure? Pick your favorite answer from [Quora][quora], and don't forget that the most important one is that **Clojure is fun**.
 
 About Lisp: yes, Clojure belongs to the glorious family of Lisp languages. Full stop. No more on this, because Common Lisp is completely different from Scheme, and the two have very little in common with Clojure.
 
@@ -19,17 +19,17 @@ So, why is it fun?
 
 1.  Great [tooling][lein] for project automation
 
-2.  Clojure code is a sequence of lists, called forms, that you can manipulate exactly in the same way you manipulate lists of integers. The right way to create the API of your framework is to provide the most convenient syntax to use it. More elaboration on this? Check Paul Graham.
+2.  Clojure code is a sequence of lists, called forms, that you can manipulate exactly as other data lists. The right way to create the API of your framework is to provide the most convenient syntax to use it. That's way it is so great to create Domain Specific Languages (DSLs). More elaboration on this? Check Paul Graham.
 
-1.  It runs of the JVM, and the layer separating Clojure
+3.  It runs of the JVM, and the layer separating Clojure
     from Java is ultra-tight. Using Java code is immediate.
 
-3.  It is a great platform for experimentation. Take the new paradigm you would like to play with. For sure you will find an implementation in Clojure. Think about asynchronous programming based on [channels][core-async] (something popularized by Go), [Software Transactional Memory][stm],
+4.  It is a great platform for experimentation. What is the next paradigm you want to play with? For sure you will find an implementation in Clojure. Think about asynchronous programming based on [channels][core-async] (something popularized by Go), [Software Transactional Memory][stm],
 or [transducers][transducers-blog].
 
-4.  If you like data analysis, you find Clojure DSLs everywhere: [Cascalog][cascalog] for Hadoop, [Flambo][flambo] for Spark, [Storm][storm] has a nice Clojure DSL, [Riemann][riemann] etc.
+5.  If you like data analysis, you find Clojure DSLs everywhere: [Cascalog][cascalog] for Hadoop, [Flambo][flambo] for Spark, [Storm][storm] has a nice Clojure DSL, [Riemann][riemann] etc.
 
-5.  Web development in Clojure is cool. On the backend, you have an modular ecosystem of components talking [ring][ring]. But it is not limited to the backend part. [Clojurescript][cljscript] is an effective Clojure compiler targeting javascript, and providing tight bindings to Javascript code. I mean... it's Node.js but the other way around.
+6.  Web development in Clojure is cool. On the backend, you have an modular ecosystem of components talking [ring][ring]. But Clojure is a good choice for the frontend also. [Clojurescript][cljscript] is an effective Clojure compiler targeting javascript, and providing Sbindings to Javascript code. I mean... it's Node.js but the other way around.
 
 These are my notes on Clojure, and these five points are also the TOC for this series of posts.
 
@@ -37,16 +37,29 @@ These are my notes on Clojure, and these five points are also the TOC for this s
 
 **You need a JDK installed. I assume you have it.**
 
-There is only one right way to be up and running, which works on every platform. It is **Leiningen**.
-
-Don't download anything, ignore your package manager and just to the [leiningen][lein] website.
-
+The Clojure compiler is distributed as a jar file. You can download this file from [clojure.org][cljwebsite], and run it using `java`,
+but I strongly suggest to use [**Leiningen**][lein].
+It makes incredibily easy to manage clojure installations, as well as the handling of libraries your projects depend on.
 
 ### Leiningen
 
-All you need is the [lein][lein-script] (or [lein.bat][lein-bat] if you are on Windows) script.
+Leiningen is probably the most popular Clojure project. It is the Clojure package manager, and it takes care of
 
-On Linux or Mac it could be something like
+* building new projects, whose layout is based on templates
+
+* downloading the specified version of Clojure (which by the way comes as a jar archive)
+
+* downloading all the dependencies of your project. The community repository of Clojure libs is [Clojars][clojars]. It handled Java dependencies as well, targeting any Maven repository.
+
+* building, compiling, running, deploying your project
+
+It has a rich set of plugins, that allows to extend its capabilities.
+There is much delivered in that little script! Not really.
+It's a little wrapper around the leiningen jar, which will be downloaded the first time you run it.
+
+To **install**, you just have to download the [lein][lein-script] (or [lein.bat][lein-bat] if you are on Windows) script.
+
+On Linux or Mac you need to run something like
 
 {% highlight bash %}
 $ mkdir ~/bin
@@ -63,20 +76,6 @@ $ lein.bat self-install
 {% endhighlight %}
 
 
-Leiningen is probably the most popular Clojure project. It is the Clojure package manager, and it takes care of
-
-* building new projects, whose layout is based on templates
-
-* downloading the specified version of Clojure (which by the way comes as a jar archive)
-
-* downloading all the dependencies of your project. The community repository of Clojure libs is [Clojars][clojars]. It handled Java dependencies as well, targeting any Maven repository.
-
-* building, compiling, running, deploying your project
-
-It has a rich set of plugins, that allows to extend its capabilities.
-There is much delivered in that little script! Not really.
-It's a little wrapper around the leiningen jar, which will be downloaded the first time you run it.
-
 Now it's time for the first project.
 
 ### Hello world
@@ -90,7 +89,7 @@ $ lein new app helloworld
 It will create for you a directory called `helloworld` containing the stub of a project.
 
 Check leiningen documentation about the project templates. Important parts are:
-1.  `project.clj`, the leiningen configuration. That's Clojure code.
+1.  `project.clj`, the leiningen configuration. The `clj` extension is used for Clojure source code files. Indeed, that's Clojure code.
 
 2.  `src` for source code. There is one directory for the namespace `helloworld`, which contains the file `core.clj`.
 
@@ -104,7 +103,7 @@ $ lein repl
 
 to ask for a [REPL][repl].
 
-The first time you run it, it will take some time, because it has to download everything, including Clojure jar itself.
+The first time you run it, it will take some time, because it has to download everything, including the Clojure jar.
 You should get something like
 
 {% highlight bash %}
@@ -235,3 +234,4 @@ You can toggle this mode on/off simply by clicking on the `live` label on the to
 [ring]: https://github.com/ring-clojure/ring
 [core-async]: http://clojure.com/blog/2013/06/28/clojure-core-async-channels.html
 [transducers-blog]: http://blog.cognitect.com/blog/2014/8/6/transducers-are-coming
+[cljwebsite]:  http://clojure.org
