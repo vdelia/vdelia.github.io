@@ -5,10 +5,11 @@ date:   2015-06-26 23:58:58
 categories: [functional, trampoline]
 permalink: /functional/trampoline/
 tags:
-  - functional
+  - functional programming
   - python
-  - basics
+  - tail call elimination
 ---
+
 
 From [wikipedia][wiki-trampoline]:
 
@@ -22,55 +23,97 @@ In this post I explain what a trampoline is and why it matters.
 Consider this recursive python function
 
 ```python
-def f(n):
+def tail_recursive_f(n):
     if n == 0:
-        return
+        return "done"
     print n
     return f(n-1)
 ```
 
-This function performs `n` recursive calls when invoked with parameter `n`.
-Can you use any value for `n`? In python, and in the *stack-oriented programming languages*
-wikipedia talks about, the answer is no. At each recursive step, the function parameters
-and the return address are pushed onto the stack, which is a limited resource.
-Thus, big values of `n` break the stack.
+The argument `n` gives us the number of recursive calls performed by `tail_recursive_f`. Can you invoke `tail_recursive_f` with any value for its argument `n`? In python, and in the *stack-oriented programming languages* wikipedia talks about, the answer is no. At each recursive step, the function parameters and the return address are pushed onto the stack, which is a limited resource. Thus, big values of `n` break the stack.
 
-In python there is a safety-guard for this: the maximum number of recursive steps your function
-can perform is hardcoded. When this limit is exceeded, you get a polite `RuntimeError` exception.
 
 ```python
->>> f(10000)
+>>> tail_recursive_f(10000)
 10000
 ...
 RuntimeError: maximum recursion depth exceeded
 ```
 
-But what if you need a deeper recursion? If your function is [tail-recursive][wiki-tailrec],
-you can easily write a *trampolined* version of it: you wrap the recursive call in a function.
+Python has a safety-guard: if the recursion depth level exceeds a hardcoded value, it triggers a `RuntimeError` exception.
 
-*Wrapping a computation in a function is a very common pattern to postpone evaluation.*
+What if you want to stop caring about the stack? If your function is [tail-recursive][wiki-tailrec], like `tail_recursive_f`, you can write a **trampolined** version of it.
+
+The objective is to 1) store the recursive calls somewhere for future execution,
+2) extract them from the function, and 3) run them in a loop.
+
+To postpone a computation, we usually wrap it in a function that performs that computation
+when invoked. That function is often called *thunk*.
 
 ```python
-def f(n):
+def operation():
+    return 6*10
+
+def lazy_operation():
+    return lambda: 6*10
+```
+
+```python
+>>> operation()
+60
+>>> lazy_operation():
+<function <lambda> at 0x7ffa2753c7d0>
+>>> thunk=lazy_operation()
+>>> thunk()
+60
+```
+
+Here, we transform `tail_recursive_f` in the same way: we wrap the recursive
+call in a lambda.
+
+```python
+def tail_recursive_f(n):
     if n == 0:
-        return
+        return "done"
     print n
     return lambda: f(n-1)
 ```
 
-
-Now it executes the first step, but then returns immediately a function (a *thunk*).
+This version of `tail_recursive_f` runs one step, and then it returns a function
+containing the continuation.
 
 ```python
->>> f(10000)
+>>> tail_recursive_f(10000)
 10000
 <function <lambda> at 0x7ffa2753c758>
 ```
 
+We can store it in a variable, and call it to execute the next step and
+get the next continuation.
 
-How do you execute `f(10000)` now? You need a *trampoline*.
-
+```python
+>>> thunk = tail_recursive_f(10000)
+10000
+>>> thunk()
+9999
+<function <lambda> at 0x7ffa2753c578>
 ```
+
+and so on.
+
+```python
+>>> thunk = thunk()
+9999
+>>> thunk = thunk()
+9998
+```
+
+At the end, the last thunk will receive `n=0`, and it won't return a callable,
+but the string `"done"`.
+
+The **tampoline** is the loop running the chain of *thunks*, until they return a callable.
+
+```python
 def trampoline(f, *args, **kwargs):
     g = lambda: f(*args, **kwargs)
     while callable(g):
@@ -78,20 +121,68 @@ def trampoline(f, *args, **kwargs):
     return g
 ```
 
-The function takes as arguments the trampolined function, and it arguments.
-At the beginning, it wrap it in another function, so that it can invoke it without
-using parameters. Then, until its result is a callable, it invokes it.
+The function takes in input the trampolined function, and its arguments, to be able to call it.
+At the beginning, it wraps it in a new function, to make it callable without parameters.
+Then, it keeps calling the thunks until they return a thunk, i.e. a callable.
 At the end, it will have the actual result, and it returns it.
 
-Now `f(10000)` is invoked in this way
+Now `tail_recursive_f(10000)` is invoked in this way
 
-{% highlight python %}
-trampoline(f, 10000)
-{% endhighlight %}
+```python
+>>> trampoline(tail_recursive_f, 10000)
+```
 
-which prints all the integers between 10000 and 1.
+which prints all the integers between 10000 and 1, before returning `"done"`.
 
-TODO: example with factorial
+What about a not tail-recursive function? I take the simplest recursive function: the factorial.
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    return n*factorial(n-1)
+```
+```python
+>>> factorial(3)
+6
+>>> factorial(1000)
+...
+RuntimeError: maximum recursion depth exceeded
+```
+
+This version of factorial is not tail-recursive: at each recursion level,
+the execution of the callee must return to the caller because it multiplies its
+return value by `n`.
+
+So first of all we turn it into tail recursive. To do this, one technique is to
+propagate intermediate results through the stack using the function arguments.
+
+```python
+def tail_recursive_factorial(n, acc=1):
+    if n == 0:
+        return acc
+    return tail_recursive_factorial(n-1, acc=n*acc)
+```
+
+In this way, at each recursion step `n`, we have all the information to
+compute the result: there is no need to return to the caller.
+
+Then, we  apply the same transformation as before
+```python
+def tail_recursive_factorial(n, acc=1):
+    if n == 0:
+        return acc
+    return lambda: tail_recursive_factorial(n-1, acc=n*acc)
+```
+
+and we are ready for our `trampoline`
+
+```python
+>>> trampoline(tail_recursive_factorial, 3)
+6
+>>> trampoline(tail_recursive_factorial, 1000)
+402387260077093773543702433923003985719374864210714632543799910429938512398629020592044208486969404800479988610197196058631666872994808558901323829669944590997424504087073759918823627727188732519779505950995276120874975462497043601418278094646496291056393887437886487337119181045825783647849977012476632889835955735432513185323958463075557409114262417474349347553428646576611667797396668820291207379143853719588249808126867838374559731746136085379534524221586593201928090878297308431392844403281231558611036976801357304216168747609675871348312025478589320767169132448426236131412508780208000261683151027341827977704784635868170164365024153691398281264810213092761244896359928705114964975419909342221566832572080821333186116811553615836546984046708975602900950537616475847728421889679646244945160765353408198901385442487984959953319101723355556602139450399736280750137837615307127761926849034352625200015888535147331611702103968175921510907788019393178114194545257223865541461062892187960223838971476088506276862967146674697562911234082439208160153780889893964518263243671616762179168909779911903754031274622289988005195444414282012187361745992642956581746628302955570299024324153181617210465832036786906117260158783520751516284225540265170483304226143974286933061690897968482590125458327168226458066526769958652682272807075781391858178889652208164348344825993266043367660176999612831860788386150279465955131156552036093988180612138558600301435694527224206344631797460594682573103790084024432438465657245014402821885252470935190620929023136493273497565513958720559654228749774011413346962715422845862377387538230483865688976461927383814900140767310446640259899490222221765904339901886018566526485061799702356193897017860040811889729918311021171229845901641921068884387121855646124960798722908519296819372388642614839657382291123125024186649353143970137428531926649875337218940694281434118520158014123344828015051399694290153483077644569099073152433278288269864602789864321139083506217095002597389863554277196742822248757586765752344220207573630569498825087968928162753848863396909959826280956121450994871701244516461260379029309120889086942028510640182154399457156805941872748998094254742173582401063677404595741785160829230135358081840096996372524230560855903700624271243416909004153690105933983835777939410970027753472000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000L
+```
 
 [wiki-trampoline]: https://en.wikipedia.org/wiki/Trampoline_%28computing%29
 [wiki-tailrec]: https://en.wikipedia.org/wiki/Tail_call
