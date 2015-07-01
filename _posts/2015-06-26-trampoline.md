@@ -4,9 +4,8 @@ title:  "Trampoline"
 date:   2015-06-26 23:58:58
 categories: [functional, trampoline]
 tags:
-  - functional programming
+  - functional-programming
   - python
-  - tail call elimination
 ---
 
 
