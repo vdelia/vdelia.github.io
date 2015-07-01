@@ -6,14 +6,14 @@ categories: [clojure, basics]
 permalink: /clojure/basics/
 tags:
   - clojure
-  - basics
+  - functional programming
 ---
 
 In this post I cover the basics of the Clojure programming language. Then buy a book.
 
 ## Syntax
 
-In Clojure you don't have a syntax. I won't spend a paragraph to explain you that to write a conditional you need the two characters `if`,
+Clojure has a very simple syntax. I won't spend a paragraph to explain you that to write a conditional you need the two characters `if`,
 followed by a condition between `(` and  `)`, and so on.
 A Clojure program is built by creating a sequence of data structures, called **forms**, which are evaluated by the compiler.
 Forms can be written in a file (*programming*), or produced by evaluating other forms ([*metaprogramming*][metaprog]).
