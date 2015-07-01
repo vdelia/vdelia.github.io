@@ -28,7 +28,7 @@ or [transducers][transducers-blog].
 
 5.  If you like data analysis, you find Clojure DSLs everywhere: [Cascalog][cascalog] for Hadoop, [Flambo][flambo] for Spark, [Storm][storm] has a nice Clojure DSL, [Riemann][riemann] etc.
 
-6.  Web development in Clojure is cool. On the backend, you have an modular ecosystem of components talking [ring][ring]. But Clojure is a good choice for the frontend also. [Clojurescript][cljscript] is an effective Clojure compiler targeting javascript, and providing Sbindings to Javascript code. I mean... it's Node.js but the other way around.
+6.  Web development in Clojure is cool. On the backend, you have an modular ecosystem of components talking [ring][ring]. But Clojure is a good choice for the frontend also. [Clojurescript][cljscript] is an effective Clojure compiler targeting javascript, and providing bindings to Javascript code. I mean... it's Node.js but the other way around.
 
 These are my notes on Clojure, and these five points are also the TOC for this series of posts.
 
