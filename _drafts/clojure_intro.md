@@ -21,8 +21,7 @@ So, why is it fun?
 
 2.  Clojure code is a sequence of lists, called forms, that you can manipulate exactly as other data lists. The right way to create the API of your framework is to provide the most convenient syntax to use it. That's way it is so great to create Domain Specific Languages (DSLs). More elaboration on this? Check Paul Graham.
 
-3.  It runs of the JVM, and the layer separating Clojure
-    from Java is ultra-tight. Using Java code is immediate.
+3.  It targets the JVM, and the layer separating Clojure from Java is ultra-tight. Using Java code is immediate.
 
 4.  It is a great platform for experimentation. What is the next paradigm you want to play with? For sure you will find an implementation in Clojure. Think about asynchronous programming based on [channels][core-async] (something popularized by Go), [Software Transactional Memory][stm],
 or [transducers][transducers-blog].
@@ -61,19 +60,19 @@ To **install**, you just have to download the [lein][lein-script] (or [lein.bat]
 
 On Linux or Mac you need to run something like
 
-{% highlight bash %}
+```bash
 $ mkdir ~/bin
 $ cd ~/bin
 $ wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
 $ export PATH=~/bin:$PATH
-{% endhighlight %}
+```
 
 on Windows, download  `lein.bat`. Then open the command prompt, go in the directory containing the script
 and run
 
-{% highlight powershell %}
-$ lein.bat self-install
-{% endhighlight %}
+```powershell
+> lein.bat self-install
+```
 
 
 Now it's time for the first project.
@@ -82,9 +81,9 @@ Now it's time for the first project.
 
 So, assuming it is in your path, run
 
-{% highlight bash %}
+```bash
 $ lein new app helloworld
-{% endhighlight %}
+```
 
 It will create for you a directory called `helloworld` containing the stub of a project.
 
@@ -97,16 +96,16 @@ Check leiningen documentation about the project templates. Important parts are:
 
 Type
 
-{% highlight bash %}
+```bash
 $ lein repl
-{% endhighlight %}
+```
 
 to ask for a [REPL][repl].
 
 The first time you run it, it will take some time, because it has to download everything, including the Clojure jar.
 You should get something like
 
-{% highlight bash %}
+```bash
 $ lein repl
 nREPL server started on port 52074 on host 127.0.0.1 - nrepl://127.0.0.1:52074
 REPL-y 0.3.5, nREPL 0.2.6
@@ -119,8 +118,7 @@ Java HotSpot(TM) 64-Bit Server VM 1.8.0_40-b27
     Exit: Control+D or (exit) or (quit)
 
 helloworld.core=>
-
-{% endhighlight %}
+```
 
 Congratulations! You correctly installed everything.
 
@@ -131,11 +129,11 @@ In the REPL you can submit Clojure code for evaluation, get the results, and get
 Want to see the `Hello world` message coming up?
 If you are still in the REPL, run
 
-{% highlight bash %}
+```bash
 helloworld.core=> (-main)
 Hello, World!
 nil
-{% endhighlight %}
+```
 
 The prompt informs us that we are in the `helloworld.core` namespace, and we ask to the REPL to evaluate the function `-main`, without arguments. It prints `Hello, World!`, and it does not return any value, so it evaluates to `nil`.
 Who provided the `-main`? lein in its template called `app` (remember the `new app` stuff?).
@@ -144,17 +142,17 @@ If you quit the REPL with `CTRL-D`, you can discover other leiningen functionali
 
 You can run directly the project with
 
-{% highlight bash %}
+```bash
 $ lein run
 Hello, World!
-{% endhighlight %}
+```
 
 or compile and build a jar ready to be deployed with
-{% highlight bash %}
+```bash
 $ lein uberjar
 $ java -jar target/uberjar/helloworld-0.1.0-SNAPSHOT-standalone.jar
 Hello, World!
-{% endhighlight %}
+```
 
 The standalone `jar` will contain all it's needed to run the project, included the clojure jar and all dependencies.
 
@@ -187,16 +185,16 @@ This is made explicit by the UI. On the top-right corner of the editor you shoul
 
 You can evaluate the `-main` created by leiningen, but we need to specify the namespace, so either
 
-{% highlight clojure %}
+```clojure
 (helloworld.core/-main)
-{% endhighlight %}
+```
 
 either
 
-{% highlight clojure %}
+```clojure
 (ns helloworld.core)
 (-main)
-{% endhighlight %}
+```
 
 In both cases you will see a `nil` at the end of the form, and a `Hello, world!` line in the console.
 This is a very convenient way of experimenting with Clojure, in particular because it's interactive to the same degree of a REPL, but you can edit it/save it as in a text editor.
