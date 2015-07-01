@@ -20,7 +20,7 @@ In this post I explain what a trampoline is and why it matters.
 
 Consider this recursive python function
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 def tail_recursive_f(n):
     if n == 0:
         return "done"
@@ -31,7 +31,7 @@ def tail_recursive_f(n):
 The argument `n` gives us the number of recursive calls performed by `tail_recursive_f`. Can you invoke `tail_recursive_f` with any value for its argument `n`? In python, and in the *stack-oriented programming languages* wikipedia talks about, the answer is no. At each recursive step, the function parameters and the return address are pushed onto the stack, which is a limited resource. Thus, big values of `n` break the stack.
 
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> tail_recursive_f(10000)
 10000
 ...
@@ -48,7 +48,7 @@ The objective is to 1) store the recursive calls somewhere for future execution,
 To postpone a computation, we usually wrap it in a function that performs that computation
 when invoked. That function is often called *thunk*.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 def operation():
     return 6*10
 
@@ -56,7 +56,7 @@ def lazy_operation():
     return lambda: 6*10
 {% endhighlight %}
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> operation()
 60
 >>> lazy_operation():
@@ -69,7 +69,7 @@ def lazy_operation():
 Here, we transform `tail_recursive_f` in the same way: we wrap the recursive
 call in a lambda.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 def tail_recursive_f(n):
     if n == 0:
         return "done"
@@ -80,7 +80,7 @@ def tail_recursive_f(n):
 This version of `tail_recursive_f` runs one step, and then it returns a function
 containing the continuation.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> tail_recursive_f(10000)
 10000
 <function <lambda> at 0x7ffa2753c758>
@@ -89,7 +89,7 @@ containing the continuation.
 We can store it in a variable, and call it to execute the next step and
 get the next continuation.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> thunk = tail_recursive_f(10000)
 10000
 >>> thunk()
@@ -99,7 +99,7 @@ get the next continuation.
 
 and so on.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> thunk = thunk()
 9999
 >>> thunk = thunk()
@@ -111,7 +111,7 @@ but the string `"done"`.
 
 The **tampoline** is the loop running the chain of *thunks*, until they return a callable.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 def trampoline(f, *args, **kwargs):
     g = lambda: f(*args, **kwargs)
     while callable(g):
@@ -126,7 +126,7 @@ At the end, it will have the actual result, and it returns it.
 
 Now `tail_recursive_f(10000)` is invoked in this way
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> trampoline(tail_recursive_f, 10000)
 {% endhighlight %}
 
@@ -134,13 +134,13 @@ which prints all the integers between 10000 and 1, before returning `"done"`.
 
 What about a not tail-recursive function? I take the simplest recursive function: the factorial.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 def factorial(n):
     if n == 0:
         return 1
     return n*factorial(n-1)
 {% endhighlight %}
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> factorial(3)
 6
 >>> factorial(1000)
@@ -155,7 +155,7 @@ return value by `n`.
 So first of all we turn it into tail recursive. To do this, one technique is to
 propagate intermediate results through the stack using the function arguments.
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 def tail_recursive_factorial(n, acc=1):
     if n == 0:
         return acc
@@ -166,7 +166,7 @@ In this way, at each recursion step `n`, we have all the information to
 compute the result: there is no need to return to the caller.
 
 Then, we  apply the same transformation as before
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 def tail_recursive_factorial(n, acc=1):
     if n == 0:
         return acc
@@ -175,7 +175,7 @@ def tail_recursive_factorial(n, acc=1):
 
 and we are ready for our `trampoline`
 
-{% highlight python linenos=table %}
+{% highlight python linenos %}
 >>> trampoline(tail_recursive_factorial, 3)
 6
 >>> trampoline(tail_recursive_factorial, 1000)
