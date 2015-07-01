@@ -3,7 +3,6 @@ layout: post
 title:  "Trampoline"
 date:   2015-06-26 23:58:58
 categories: [functional, trampoline]
-permalink: /functional/trampoline/
 tags:
   - functional programming
   - python
