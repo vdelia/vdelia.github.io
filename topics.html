@@ -1,6 +1,6 @@
 ---
 layout: page
-title: topics
+title: Topics
 permalink: /topics/
 ---
 
