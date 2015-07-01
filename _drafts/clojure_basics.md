@@ -6,25 +6,22 @@ categories: [clojure, basics]
 permalink: /clojure/basics/
 tags:
   - clojure
-  - functional programming
+  - functional-programming
 ---
 
 In this post I cover the basics of the Clojure programming language. Then buy a book.
 
 ## Syntax
+A Clojure program is a sequence of data structures, called **forms**, which are evaluated by the **compiler**.
+Forms can be written in a source file (*programming*), and then loaded by the **reader**. Alternatively, they
+are produced by evaluating other forms ([*metaprogramming*][metaprog]).
+This last step allows the developer to create new syntax.
 
-Clojure has a very simple syntax. I won't spend a paragraph to explain you that to write a conditional you need the two characters `if`,
-followed by a condition between `(` and  `)`, and so on.
-A Clojure program is built by creating a sequence of data structures, called **forms**, which are evaluated by the compiler.
-Forms can be written in a file (*programming*), or produced by evaluating other forms ([*metaprogramming*][metaprog]).
+You can think of it as if the syntax of the language was `json`. The reader loads the textual representation from a source file, and
+deserializes it to binary objects: constants, lists, etc.
+Then, the compiler evaluates those objects to produce a result, perform side-effects, or generate
+new `json` to evaluate.
 
-The **Reader** is the component which reads sequence of characters, and produces the forms which are then processed by the **compiler**.
-
-You can think of it as if the syntax of the language would be `json`. The reader reads its textual representation from a source file, and
-deserializes it to objects. Then, the compiler evaluates those objects to produce a result, perform side-effects, or potentially generate
-new objects to evaluate.
-
-## The Reader
-The REPL, or even better the InstantRepl of LightTable, is the best way to understand how the Reader works.
+The REPL, like the InstantRepl of LightTable, is the best tool to understand how this stuff works.
 
 [metaprog]: https://en.wikipedia.org/wiki/Metaprogramming
