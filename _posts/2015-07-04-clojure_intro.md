@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Getting Started with Clojure"
-date:   2015-06-26 23:58:58
+date:   2015-07-04 23:58:58
 categories: [clojure, intro]
 permalink: /clojure/intro/
 tags:
