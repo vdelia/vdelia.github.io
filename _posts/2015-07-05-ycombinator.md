@@ -5,7 +5,7 @@ date:   2015-07-05 14:02:50
 categories: [functional, y-combinator]
 tags:
   - functional-programming
-  - combinators
+  - clojure
 ---
 
 In the [untyped lambda calculus][wiki-lambda], you cannot assign names to functions,
