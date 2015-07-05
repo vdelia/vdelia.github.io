@@ -18,26 +18,27 @@ Buy it, it's a great book.
 I develop the applicative Y combinator from the function
 `factorial`.
 The code is in Clojure, which has a limited [TCO][tail-call].
-Thus, don't use the factorial defined here, it will break your stack.
+Thus, the factorial function defined here has just a didactic purpose.
 
 I suggest to run this stuff in a Clojure REPL. The [Lighttable][lighttable] Instant REPL is perfect here.
 In [This post][clojure-intro] you can find some notes on how to setup everything.
 
-During the post, I apply multiple times the same transformation.
-It defined in the first section.
-In the second section I define an anonymous function computing recursively the factorial. In the last one, I perform some cleanup, and I finally extract the factorial function and the applicative Y combinator.
+To obtain Y, I apply multiple times just 1 same transformation, which I define in the first section.
+In the second section I define an anonymous function computing recursively the factorial.
+In the last one, I perform some cleanup, and I finally extract the factorial function and the applicative Y combinator.
 
 ## How to create bindings
--
+
 Consider
 
 {% highlight clojure linenos=table %}
 (fn [n] (+ n 1))
 {% endhighlight %}
 
-If we have just anonymous functions, how can we bind this to the name `increment` ?.
+In a world without `def`, how can I bind this to the name `increment`?
 
-We create a new anonymous function, which takes `increment` as argument, and we pass the anonymous function  above to it.
+The only names I see are function arguments. Thus, I create a new anonymous function
+whose argument is  `increment`, and I pass to it the snippet  above.
 
 {% highlight clojure linenos=table %}
 ((fn [increment]   ; the "environment"
@@ -45,9 +46,9 @@ We create a new anonymous function, which takes `increment` as argument, and we 
 (fn [n] (+ n 1))) ; the argument
 {% endhighlight %}
 
-If executed, it will print `The name increment exists. (increment 1) is 2`
+When executed, it prints `The name increment exists. (increment 1) is 2`
 
-This is the primitive transformation used throughout this post.
+This is the primitive transformation I use everywhere in this post.
 
 ## Factorial
 
@@ -60,7 +61,8 @@ Since I need a placeholder pointing to the location where I should recur, I defi
 (defn if-only-i-could-recur [x] (throw (Exception. "you cannot call me")))
 {% endhighlight %}
 
-I cheat a bit, since I cannot name things, but when invoked, it raises an Exception. It's a placeholder meaning *you cannot be here*.
+I cheat a bit since I cannot name things, but when invoked it raises an Exception.
+It's just a placeholder meaning *you cannot be here*.
 
 The `factorial` function looks like this
 
@@ -74,11 +76,12 @@ The `factorial` function looks like this
 
 It takes an integer as parameter:
 1.  if it's 0, then the factorial is 1
-2.  otherwise we should the recur on n-1. Unfortunately we cannot, because we don't have a name to refer to itself. Good place  for our placeholder, isn't it?
+2.  otherwise we should recur on n-1. Unfortunately, we cannot. We don't have a name to refer to itself. Good place  for our placeholder, isn't it?
 
-For the moment, we can compute just the factorial of 0.
+This function is able to compute just the factorial of 0. What we do want to do
+is pass to it the recursive step to execute.
 
-How can we assign a name to the next recursive step? By wrapping all in a new function.
+How can we assign a name to the next recursive step? By wrapping everything in a new function.
 
 {% highlight clojure linenos=table %}
 ((fn [recursive-step]
@@ -127,9 +130,9 @@ To start, we can use simply `build-factorial`.
 but unfortunately this function is broken. Try to run it!
 
 The problem is that at line 8 we call `recursive-step`, which
-now is bound to `build-factorial`. But `build-factorial` is *not* the factorial function, it is a function able to build it when it receives a function (the recurring step) as argument.
-Which function can we use as argument. *The key is that the only function with a name here is `recursive-step` itself.
-So we use it.*
+now is bound to `build-factorial`. But `build-factorial` is **not** the factorial function, it is a function able to build it when it receives a function (the recurring step) as argument.
+Which function can we use as argument. **The key of the puzzle is that the only function with a name here is
+`recursive-step` itself. So we use it.**
 
 {% highlight clojure linenos=table %}
 ((fn [build-factorial]
@@ -146,10 +149,14 @@ So we use it.*
 This is a working factorial definition. Try it!
 
 ## Extract Y
-The goal is now to refactor the last expression we wrote to extract the factorial function. The remaining part will be Y.
+The goal is now to refactor the last expression to extract the factorial function.
+The remaining part is Y.
 
-First of all, we are going to extract the  `(recursive-step recursive-step)` call at line 8.
-That is a function that receives an argument, and apply   `(recursive-step recursive-step)` to it. In Clojure this is
+First of all, we extract the form `(recursive-step recursive-step)` at line 8.
+
+We do it in two steps. First of all, I wrap it in the call to a function that
+receives an argument, and apply   `(recursive-step recursive-step)` to it.
+In Clojure this is
 
 {% highlight clojure linenos=table %}
 (fn [x] ((recursive-step recursive-step) x))
@@ -171,7 +178,8 @@ which means, in our factorial function
  ))
 {% endhighlight %}
 
-Now I want to extract that, assigning a name to it. Which name? Since that's the place for the recursive call, it seems natural to call it `factoral`.
+Then, I extract that, assigning a name to it. Which name? Since that's the
+place for the recursive call, it seems natural to call it `factoral`.
 
 {% highlight clojure linenos=table %}
 ((fn [build-factorial]
@@ -206,13 +214,14 @@ Now what's beneath `((fn [factorial]...` really looks like the recursive definit
                   (dec n)))))))
   {% endhighlight %}
 
-Here the anonymous function `(fn [factorial] ...)` returns
-a function whose body is the form `(fn [n] ...)`, which computes the factorial of `n` by calling `factorial` to recur.
+Here the anonymous function `(fn [factorial] ...)` is a factory building
+factorial functions, i.e. functions whose body is the form `(fn [n] ...)`,
+which compute the factorial of `n` by using the name `factorial` to recur.
 
-It works because it is passed as argument to another function,  
-  which calls it by passing as argument (which is the recursive step) a new instance of `(fn [n] ...)`. We call this function Y.
+It works because the factory is passed as argument to another function,
+called the applicative Y combinator.
 
-  {% highlight clojure linenos=table %}
+{% highlight clojure linenos=table %}
   (defn Y
     [f]
     ((fn [g] (g g))
@@ -221,7 +230,11 @@ It works because it is passed as argument to another function,
         (fn [x] ((h h) x))))))
   {% endhighlight %}
 
-  In an environment where you cannot name things, Y allows you to build functions referring to themselves.
+Y uses the factory to build a new function, passing as argument to it
+(i.e. the recursive step) another instance of the function built with the
+factory itself.
+
+In an environment where you cannot name things, Y allows you to build functions referring to themselves.
 
 {% highlight clojure linenos=table %}
   (Y
