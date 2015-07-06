@@ -79,11 +79,13 @@ The `factorial` function looks like this
 {% endhighlight %}
 
 It takes an integer as parameter:
+
 1.   if it's 0, then the factorial is 1
 2.   otherwise we should recur on n-1. Unfortunately, we cannot. We don't have a name to refer to itself. Good place  for our placeholder, isn't it?
 
-For the moment, this function is able to compute the factorial of 0. What we do
-want to do is pass to it the recursive step to execute.
+
+For the moment, this function is able to compute the factorial of 0 only. What
+we do want to do is to pass to it the recursive step to execute.
 
 But how can we assign a name to the next recursive step? By wrapping everything
 in a new function.
