@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "The applicative Y combinator"
+title:  "The applicative-order Y combinator"
 date:   2015-07-05 14:02:50
 categories: [functional, y-combinator]
 tags:
@@ -15,7 +15,7 @@ This is a puzzle: in such an environment, how can you define recursive functions
 These are my notes based on chapter 9 of [The Little Schemer][little-schemer].
 Buy it, it's a great book.
 
-I develop the applicative Y combinator from the function
+I develop the applicative-order Y combinator from the function
 `factorial`.
 The code is in Clojure, which has a limited [TCO][tail-call].
 Thus, the factorial function defined here has just a didactic purpose.
@@ -26,7 +26,7 @@ In [this post][clojure-intro] you can find some notes on how to setup everything
 To obtain Y, I apply multiple times the transformation defined in the first section.
 In the second section I define an anonymous function computing recursively the factorial.
 In the last one, I perform some cleanup, and I finally extract the factorial
-function and the applicative Y combinator.
+function and the applicative-order Y combinator.
 
 ## How to create bindings
 
@@ -230,7 +230,7 @@ factorial functions, i.e. functions whose body is the form `(fn [n] ...)`,
 which compute the factorial of `n` by using the name `factorial` to recur.
 
 It works because the factory is passed as argument to another function,
-called the applicative Y combinator.
+called the applicative-order Y combinator.
 
 {% highlight clojure linenos=table %}
   (defn Y
