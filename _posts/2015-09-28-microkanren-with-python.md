@@ -35,6 +35,7 @@ The first section contains an implementation of $\mu$kanren in python; in the se
 A $\mu$Kanren program can be interpreted as a query. Given a set of relations among items and variables, we ask to the interpreter to find the variable substitutions so that those relations are valid.
 
 From the [paper][micro-paper]
+
 > A $\mu$Kanren program proceeds through the application of a **goal** to a **state**. Goals are often understood by analogy to predicates. Whereas the application of a predicate to an element of its domain can be either true or false, a goal pursued in a given state can either succeed or fail.
 
 > A **state** is a pair of a substitution (represented as a dictionary) and a non-negative integer representing a fresh variable counter.
