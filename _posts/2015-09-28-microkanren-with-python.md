@@ -6,9 +6,9 @@ tags:
     - notebook
     - logic-programming
 ---
-# A python implementation of  $$ \mu $$ Kanren
+# A python implementation of $$\mu$$Kanren
 
-[ $$ \mu $$ Kanren][micro] (microKanren) 
+[$$\mu$$Kanren][micro] (microKanren) 
 is a minimalistic relational programming language, introduced as a stripped-down implementation of [minikanren][minikanren].
 
 What is a  **relational programming language**? In other programming paradigms, a program is a set of operations (functions, statements, etc.) which consume *inputs* to produce *outputs*.
@@ -23,20 +23,20 @@ They show how to **embed a logic interpreter** into [Scheme][racket].
 
 While Scheme is the reference host for all the *\*kanren*s, currently there are many implementations, in many different host languages. The most succesful is probably [clojure/core.logic][core.logic].
 
-This post is actually a ipython notebook where I implement  $$ \mu $$ Kanren and some syntactic sugar in **python**.
+This post is actually a ipython notebook where I implement $$\mu$$Kanren and some syntactic sugar in **python**.
 The notebook file is available [here]({{ site.url }}/assets/kanren/ukanren.ipynb).
 It is meant to be really interactive: I redefine multiple times several functions to get a more and more friendly API.
 
 
-The first section contains an implementation of  $$ \mu $$ kanren in python; in the second section I introduce some syntactic sugar to make it more similar to miniKanren; the last sections contain some examples of what kind of programs can be written with it.
+The first section contains an implementation of $$\mu$$kanren in python; in the second section I introduce some syntactic sugar to make it more similar to miniKanren; the last sections contain some examples of what kind of programs can be written with it.
 
-##  $$ \mu $$ Kanren core
+## $$\mu$$Kanren core
 
-A  $$ \mu $$ Kanren program can be interpreted as a query. Given a set of relations among items and variables, we ask to the interpreter to find the variable substitutions so that those relations are valid.
+A $$\mu$$Kanren program can be interpreted as a query. Given a set of relations among items and variables, we ask to the interpreter to find the variable substitutions so that those relations are valid.
 
 From the [paper][micro-paper]
 
-> A  $$ \mu $$ Kanren program proceeds through the application of a **goal** to a **state**. Goals are often understood by analogy to predicates. Whereas the application of a predicate to an element of its domain can be either true or false, a goal pursued in a given state can either succeed or fail.
+> A $$\mu$$Kanren program proceeds through the application of a **goal** to a **state**. Goals are often understood by analogy to predicates. Whereas the application of a predicate to an element of its domain can be either true or false, a goal pursued in a given state can either succeed or fail.
 
 > A **state** is a pair of a substitution (represented as a dictionary) and a non-negative integer representing a fresh variable counter.
 
@@ -59,7 +59,7 @@ To create new `logic_variable`s, we use the *fresh variable counter* to generate
 
 ### Substitutions
 
-Substitutions are represented by python dictionaries whose keys  $$ k $$  are `logic_variable`s, and whose values  $$ v $$  are items that can replace that variable.
+Substitutions are represented by python dictionaries whose keys $$k$$ are `logic_variable`s, and whose values $$v$$ are items that can replace that variable.
 
 **In [2]:**
 
@@ -68,13 +68,13 @@ class SubstitutionMap(dict):
     pass
 {% endhighlight %}
 
-A `logic_variable`  $$ X $$  can be
+A `logic_variable` $$X$$ can be
 
-*   free, i.e.  $$ X $$  not in SubstitionMap, and the relations are valid predicates for all  $$ X $$ 
-*   bound to another `logic_variable`  $$ Y $$ :  $$ X $$  is equivalent to  $$ Y $$ , and SubstitutionMap[ $$ X $$ ] =  $$ Y $$ 
-*   bound to an item  $$ i $$ : predicates hold when  $$ X $$  is replaced by  $$ i $$ 
+*   free, i.e. $$X$$ not in SubstitionMap, and the relations are valid predicates for all $$X$$
+*   bound to another `logic_variable` $$Y$$: $$X$$ is equivalent to $$Y$$, and SubstitutionMap[$$X$$] = $$Y$$
+*   bound to an item $$i$$: predicates hold when $$X$$ is replaced by $$i$$
 
-We will see later what are the terms of the language, and so what are the items  $$ i $$ .
+We will see later what are the terms of the language, and so what are the items $$i$$.
 
 The **walk** method searches for a term's value. If the term is a value (i.e. not a logic variable), then it returns the value itself. Otherwise, it traverses the chain of substitutions until it finds a value.
 
@@ -124,16 +124,16 @@ empty_state = (SubstitutionMap(), 0)
 ### The terms of the language: `unify`
 
 The function `unify` defines which are the terms of the language.
-It takes as arguments two objects,  $$ x $$  and  $$ y $$ , and a SubstitutionMap *substitutions*.
+It takes as arguments two objects, $$x$$ and $$y$$, and a SubstitutionMap *substitutions*.
 
-Its objective is to add new bindings to *substitutions*, so that  $$ x $$  and  $$ y $$  becomes equivalent, i.e. 
+Its objective is to add new bindings to *substitutions*, so that $$x$$ and $$y$$ becomes equivalent, i.e. 
 ```
 unifying = unify(x, y, substitution)
 unifying.walk(x) == unifying.walk(y)
 ```
 
-If there is no way to get  $$ x $$  equivalent to  $$ y $$ , for example because they are both already bound to terms
-not equivalent, then it `unify` returns `None`. In this case we say that  $$ x $$  and  $$ y $$  do not unify under
+If there is no way to get $$x$$ equivalent to $$y$$, for example because they are both already bound to terms
+not equivalent, then it `unify` returns `None`. In this case we say that $$x$$ and $$y$$ do not unify under
 `substitution` , i.e.
 
 ```
@@ -143,7 +143,7 @@ unify(x, y, substitution) == None
 In this implementation, valid terms are python objects. At the beginning `unify` walks the two arguments
 by using the SubstitutionMap. Then it checks the resulting terms. The two objects unify if
 *   they are equals according to the `==` operator; then we don't need to add anything to *substitution*
-*   one is a `logic_variable`  $$ v $$ , and in that case  $$ v $$  must be substituted with the other term to get the unification working
+*   one is a `logic_variable` $$v$$, and in that case $$v$$ must be substituted with the other term to get the unification working
 *   they are sequences, and in that case the unification is recursively applied term by term.
 
 **In [6]:**
@@ -171,7 +171,7 @@ def unify(x, y, substitutions):
     return _concrete_unify(x, y, substitutions)
 {% endhighlight %}
 
-Sequences are objects with the `__iter__` method. This is orthogonal to the rest of  $$ \mu $$ Kanren. To handle new kind of terms, we must update the `unify` function.
+Sequences are objects with the `__iter__` method. This is orthogonal to the rest of $$\mu$$Kanren. To handle new kind of terms, we must update the `unify` function.
 
 **In [7]:**
 
@@ -211,7 +211,7 @@ A *goal* is a function which takes as argument a state, i.e. a pair (`Substituti
 In this implementation, *goal*s are generators yielding the valid states. If the generator is empty, then that goal
 does not succeed.
 
- $$ \mu $$ Kanren has four primitive goals builder: `equiv`, `call_fresh`, `disj` and `conj`.
+$$\mu$$Kanren has four primitive goals builder: `equiv`, `call_fresh`, `disj` and `conj`.
 
 ### `Equiv`
  `equiv` builds a goal which succeeds if its two arguments unify, i.e. it yields the substitutions which make its arguments unify
@@ -239,8 +239,8 @@ assert list(equiv(x, y)(empty_state)) == [(SubstitutionMap({x: y}), 0)]
 ### `call_fresh`
 The call/fresh goal constructor creates a new `logic_variable`.
 
-It takes as argument a unary function  $$ f $$ , which must return a goal, and it returns
-a new goal which runs  $$ f $$  by binding its argument to a new `logic_variable`.
+It takes as argument a unary function $$f$$, which must return a goal, and it returns
+a new goal which runs $$f$$ by binding its argument to a new `logic_variable`.
 It leaves unchanged the substitutions, but it increments the *fresh variable counter*,
 to ensure unicity of variables indexes.
 
@@ -254,14 +254,14 @@ def call_fresh(f):
 
 {% endhighlight %}
 
-As shown in the following tests, if I want to introduce a new logic variable in a goal  $$ G $$ :
+As shown in the following tests, if I want to introduce a new logic variable in a goal $$G$$:
 
-*   I wrap the goal  $$ G $$  in a unary function  $$ f $$ 
-*   I use the sole argument of  $$ f $$  as logic_variable in  $$ G $$ 
-*   I pass  $$ f $$  to `call_fresh` and I use the resulting goal
+*   I wrap the goal $$G$$ in a unary function $$f$$
+*   I use the sole argument of $$f$$ as logic_variable in $$G$$
+*   I pass $$f$$ to `call_fresh` and I use the resulting goal
 
 This is quiet verbose: the API will be simplified with the operator `fresh`. Since this is not
-part of the core of  $$ \mu $$ Kanren, we will see that later.
+part of the core of $$\mu$$Kanren, we will see that later.
 
 **In [12]:**
 
@@ -288,7 +288,7 @@ assert list(goal(empty_state)) ==\
 
 ### `disj`
 
-`disj` takes as arguments some goals, and it returns a new goal which succeeds for a given state  $$ s $$  if either succeeds for that state  $$ s $$ .
+`disj` takes as arguments some goals, and it returns a new goal which succeeds for a given state $$s$$ if either succeeds for that state $$s$$.
 
 I use `ANY` as synonim of `disj`, since it is equivalent to the built-in function `any`.
 
@@ -326,8 +326,8 @@ assert len(r) == 3 \
 {% endhighlight %}
 
 ### `conj`
-`conj` takes as arguments some goals, and it returns a new goal which succeeds for a given state  $$ s $$ 
-if all of them succeed for that state  $$ s $$ . 
+`conj` takes as arguments some goals, and it returns a new goal which succeeds for a given state $$s$$
+if all of them succeed for that state $$s$$. 
 
 I use `ALL` as synonim of `conj`, since it is equivalent to the built-in function `all`.
 
@@ -382,7 +382,7 @@ r = list(call_fresh(lambda x: call_fresh(lambda y: g_all_ok(x, y)))(empty_state)
 assert r == [(SubstitutionMap({x: 3, y: 3}), 2)], "x cannot be 2"
 {% endhighlight %}
 
-**That's it**. This is the core of  $$ \mu $$ Kanren.
+**That's it**. This is the core of $$\mu$$Kanren.
 
 In the next session we will add some syntactic sugar implemented in minikanren, which is very convenient to use what we implemented as an actual language.
 
@@ -613,9 +613,9 @@ def charactero(characterid, name, surname):
                    for (k, (n, s)) in got_characters.iteritems()])
 {% endhighlight %}
 
-Now I can `run` some queries on it. To do that, I need to pass some logic variables to the predicate, and let  $$ \mu $$ Kanren find those values. I use python functions and `run` to get new logic variables and perform the search.
+Now I can `run` some queries on it. To do that, I need to pass some logic variables to the predicate, and let $$\mu$$Kanren find those values. I use python functions and `run` to get new logic variables and perform the search.
 
-*   What are name and surname of the character whose id is 16? Find  $$ X $$  and  $$ Y $$  s.t. `charactero(16, X, Y)`.
+*   What are name and surname of the character whose id is 16? Find $$X$$ and $$Y$$ s.t. `charactero(16, X, Y)`.
 
 **In [27]:**
 
@@ -628,7 +628,7 @@ for name, surname in run(lambda x, y: charactero(16, x, y)):
     brandon stark has id 16
 
 
-*   What are id and name of the characters whose surname is 'baratheon'?  Find  $$ X $$  and  $$ Y $$  s.t. `charactero(X, Y, 'baratheon')`.
+*   What are id and name of the characters whose surname is 'baratheon'?  Find $$X$$ and $$Y$$ s.t. `charactero(X, Y, 'baratheon')`.
 
 **In [28]:**
 
@@ -674,7 +674,7 @@ for _id, in run(lambda i: id_houseo('baratheon', i)):
     house of baratheon:  5 7 9 11 6 18
 
 
-*    $$ X $$  such that house name is 'baratheon' and character id is 20
+*   $$X$$ such that house name is 'baratheon' and character id is 20
 
 **In [31]:**
 
@@ -683,10 +683,10 @@ for x in run(lambda x: id_houseo('baratheon', 20)):
     print x
 {% endhighlight %}
 
-No value of  $$ X $$  can satisfy the predicate
+No value of $$X$$ can satisfy the predicate
 
 
-*    $$ X $$  such that house name is 'baratheon' and character id is 5
+*   $$X$$ such that house name is 'baratheon' and character id is 5
 
 **In [32]:**
 
@@ -698,7 +698,7 @@ for x, in run(lambda x: id_houseo('baratheon', 5)):
     free_value(id=0)
 
 
-Every value of  $$ X $$  satisfies the predicate.
+Every value of $$X$$ satisfies the predicate.
 
 
 I want to hide the character id, and write the predicate `houseo`, which creates the relation among house names, and name and surname of characters.
@@ -760,7 +760,7 @@ for house, name in run(lambda house, name: houseo(house, name, house)):
 
 # Example: Data structures
 
-In this example I add [`cons`es][cons] to  $$ \mu $$ Kanren. Then we will play with the very interesting `membero` and `appendo` relations.
+In this example I add [`cons`es][cons] to $$\mu$$Kanren. Then we will play with the very interesting `membero` and `appendo` relations.
 
 ## `cons` predicates
 
@@ -797,7 +797,7 @@ def tailo(acons, tail):
     return fresh(lambda first: conso(first, tail, acons))
 {% endhighlight %}
 
-*   the  $$ C $$  such that  $$ C $$  is cons of 1 and 2
+*   the $$C$$ such that $$C$$ is cons of 1 and 2
 
 **In [37]:**
 
@@ -919,7 +919,7 @@ In this section I will run all examples on the python list `ten`
 ten = range(10)
 {% endhighlight %}
 
-*   Find  $$ f $$ ,  $$ t $$ , s.t.  $$ f $$  is the first of `ten` and  $$ t $$  is the tail of `ten`
+*   Find $$f$$, $$t$$, s.t. $$f$$ is the first of `ten` and $$t$$ is the tail of `ten`
 
 **In [43]:**
 
@@ -935,7 +935,7 @@ for f, t in run(lambda f, t: ALL(
     [1, 2, 3, 4, 5, 6, 7, 8, 9] is the tail of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-*   Find all  $$ x $$  and  $$ acons $$ , s.t.  $$ acons $$  is the `cons(x, x)`
+*   Find all $$x$$ and $$acons$$, s.t. $$acons$$ is the `cons(x, x)`
 
 **In [44]:**
 
@@ -964,7 +964,7 @@ def membero(collection, elt):
     return fresh(_f)
 {% endhighlight %}
 
-*   find all  $$ x $$  s.t. 30 is member of `ten`. Such an  $$ x $$  does not exist.
+*   find all $$x$$ s.t. 30 is member of `ten`. Such an $$x$$ does not exist.
 
 **In [46]:**
 
@@ -973,7 +973,7 @@ for x in run(lambda x: membero(ten, 30)):
     print x
 {% endhighlight %}
 
-*   find all  $$ x $$  s.t. 2 is member of `ten`. All  $$ x $$ s are fine here.
+*   find all $$x$$ s.t. 2 is member of `ten`. All $$x$$s are fine here.
 
 **In [47]:**
 
@@ -985,7 +985,7 @@ for x in run(lambda x: membero(ten, 2)):
     (free_value(id=0),)
 
 
-*   find all  $$ x $$  s.t.  $$ x $$  is member of `ten`. We enumerate the values in `ten`.
+*   find all $$x$$ s.t. $$x$$ is member of `ten`. We enumerate the values in `ten`.
 
 **In [48]:**
 
@@ -1006,7 +1006,7 @@ for elt,  in run(lambda elt: membero(ten, elt)):
     9 is in  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-*   We can inspect the structure itself of the list. Find  $$ x $$ s s.t. [4, 65, 9] is member of [1, 2,  $$ x $$ ].
+*   We can inspect the structure itself of the list. Find $$x$$s s.t. [4, 65, 9] is member of [1, 2, $$x$$].
 
 **In [49]:**
 
