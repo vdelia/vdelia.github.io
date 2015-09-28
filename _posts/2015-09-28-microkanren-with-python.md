@@ -16,14 +16,15 @@ What is a  **relational programming language**? In other programming paradigms, 
 A relational program is a set of predicates on (logic) variables. Running it means searching the values that can be assigned to logic variables so that those predicates hold. It does not return a value, but it enumerates solutions. Moreover, there is no distinction between *inputs* and *outputs* of relations.
 
 To me relational programming is a way to extract a usable and pure logical subset of prolog, and bring it to the masses.
-[Other people][lp-overrated] see it as DSLs for brute-force search. Everybody agree that [this presentation][prez-byrd] is mind-blowing.
+[Other people][lp-overrated] see it as DSLs for brute-force search. Everybody agrees that [this presentation][prez-byrd] is mind-blowing.
 
 Where does it come from? In [The Reasoned Schemer][reasoned-schemer], the authors introduced relational programming as a **natural extension of functional programming**. 
 They show how to **embed a logic interpreter** into [Scheme][racket].
 
 While Scheme is the reference host for all the *\*kanren*s, currently there are many implementations, in many different host languages. The most succesful is probably [clojure/core.logic][core.logic].
 
-This post is actually a ipython notebook where I implement $\mu$Kanren and some syntactic sugar in **python**. You can download the original notebook here.
+This post is actually a ipython notebook where I implement $\mu$Kanren and some syntactic sugar in **python**.
+The notebook file is available [here]({{ site.url }}/assets/kanren/ukanren.ipynb).
 It is meant to be really interactive: I redefine multiple times several functions to get a more and more friendly API.
 
 
