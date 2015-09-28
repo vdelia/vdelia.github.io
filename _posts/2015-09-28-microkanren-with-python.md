@@ -255,6 +255,7 @@ def call_fresh(f):
 {% endhighlight %}
 
 As shown in the following tests, if I want to introduce a new logic variable in a goal  $$ G $$ :
+
 *   I wrap the goal  $$ G $$  in a unary function  $$ f $$ 
 *   I use the sole argument of  $$ f $$  as logic_variable in  $$ G $$ 
 *   I pass  $$ f $$  to `call_fresh` and I use the resulting goal
@@ -560,6 +561,7 @@ The language is sweet enough to run some examples!
 In this first example, I use what we developed to run some query over a db of [Game of Thrones][got] characters.
 
 How does the language work?
+
 *   Combine `equiv` and `conde` (or `ALL`, `ANY`) to create new predicate.
 *   If you need new `logic_variable`s, wrap the predicate in a python function, and use `fresh` or `run`
     to build them
