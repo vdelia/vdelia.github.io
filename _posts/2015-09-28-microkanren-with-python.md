@@ -9,22 +9,24 @@ tags:
 # A python implementation of $$\mu$$Kanren
 
 [$$\mu$$Kanren][micro] (microKanren) 
-is a minimalistic relational programming language, introduced as a stripped-down implementation of [minikanren][minikanren].
+is a minimalistic relational programming language, introduced as a stripped-down implementation of [minikanren][minikanren]. As stated by its creators, it is *micro as in microkernel*.
 
 What is a  **relational programming language**? In other programming paradigms, a program is a set of operations (functions, statements, etc.) which consume *inputs* to produce *outputs*.
 
-A relational program is a set of predicates on (logic) variables. Running it means searching the values that can be assigned to logic variables so that those predicates hold. It does not return a value, but it enumerates solutions. Moreover, there is no distinction between *inputs* and *outputs* of relations.
+A relational program is a set of predicates on (logic) variables. The program is executed by runnint a *query*,
+which means searching the values that can be assigned to logic variables so that those predicates hold. A relational
+query does not return a value, but it enumerates solutions. Moreover, there is no distinction between *inputs* and *outputs* of relations.
 
-To me relational programming is a way to extract a usable and pure logical subset of prolog, and bring it to the masses.
-[Other people][lp-overrated] see it as DSLs for brute-force search. Everybody agrees that [this presentation][prez-byrd] is mind-blowing.
+To me relational programming is a way to extract a usable and pure logical subset of prolog. Minikanren brings it to the masses, by embedding a relational subsystem in other host languages.
+
+[Other people][lp-overrated] see it as DSLs for brute-force search, but everybody agrees that [this presentation][prez-byrd] is mind-blowing.
 
 Where does it come from? In [The Reasoned Schemer][reasoned-schemer], the authors introduced relational programming as a **natural extension of functional programming**. 
 They show how to **embed a logic interpreter** into [Scheme][racket].
 
-While Scheme is the reference host for all the *\*kanren*s, currently there are many implementations, in many different host languages. The most succesful is probably [clojure/core.logic][core.logic].
+While Scheme is the reference host for all the *\*kanren*s, currently there are many implementations, in many different host languages. The most successful is probably [clojure/core.logic][core.logic].
 
-This post is actually a ipython notebook where I implement $$\mu$$Kanren and some syntactic sugar in **python**.
-The notebook file is available [here]({{ site.url }}/assets/kanren/ukanren.ipynb).
+This post is actually a ipython notebook where I implement $$\mu$$Kanren and some syntactic sugar in **python**. You can download the original notebook [here]({{ site.url }}/assets/kanren/ukanren.ipynb).
 It is meant to be really interactive: I redefine multiple times several functions to get a more and more friendly API.
 
 
@@ -35,7 +37,6 @@ The first section contains an implementation of $$\mu$$kanren in python; in the 
 A $$\mu$$Kanren program can be interpreted as a query. Given a set of relations among items and variables, we ask to the interpreter to find the variable substitutions so that those relations are valid.
 
 From the [paper][micro-paper]
-
 > A $$\mu$$Kanren program proceeds through the application of a **goal** to a **state**. Goals are often understood by analogy to predicates. Whereas the application of a predicate to an element of its domain can be either true or false, a goal pursued in a given state can either succeed or fail.
 
 > A **state** is a pair of a substitution (represented as a dictionary) and a non-negative integer representing a fresh variable counter.
@@ -132,8 +133,8 @@ unifying = unify(x, y, substitution)
 unifying.walk(x) == unifying.walk(y)
 ```
 
-If there is no way to get $$x$$ equivalent to $$y$$, for example because they are both already bound to terms
-not equivalent, then it `unify` returns `None`. In this case we say that $$x$$ and $$y$$ do not unify under
+If there is no way to get $$x$$ equivalent to $$y$$, for example because they are both already bound to not equivalent
+terms, then it `unify` returns `None`. In this case we say that $$x$$ and $$y$$ do not unify under
 `substitution` , i.e.
 
 ```
@@ -142,6 +143,7 @@ unify(x, y, substitution) == None
 
 In this implementation, valid terms are python objects. At the beginning `unify` walks the two arguments
 by using the SubstitutionMap. Then it checks the resulting terms. The two objects unify if
+
 *   they are equals according to the `==` operator; then we don't need to add anything to *substitution*
 *   one is a `logic_variable` $$v$$, and in that case $$v$$ must be substituted with the other term to get the unification working
 *   they are sequences, and in that case the unification is recursively applied term by term.
@@ -213,7 +215,7 @@ does not succeed.
 
 $$\mu$$Kanren has four primitive goals builder: `equiv`, `call_fresh`, `disj` and `conj`.
 
-### `Equiv`
+### `equiv`
  `equiv` builds a goal which succeeds if its two arguments unify, i.e. it yields the substitutions which make its arguments unify
 
 **In [9]:**
@@ -390,6 +392,7 @@ In the next session we will add some syntactic sugar implemented in minikanren, 
 
 Now that we have the core of the system, it is time to add some sugar to make it pleasant to use.
 
+
 ### `fresh`
 `fresh` is a `call_fresh` without the single-variable limitation.
 
@@ -501,6 +504,8 @@ assert reify(test_sm, logic_variable(12)) != \
 {% endhighlight %}
 
 ### `run`, reworked
+
+`run` is the function we use to run queries.
 
 I let `run` handle the reification, and hide completely the `SubstitutionMap`.
 
@@ -621,7 +626,7 @@ Now I can `run` some queries on it. To do that, I need to pass some logic variab
 
 {% highlight python %}
 #  logic variables
-for name, surname in run(lambda x, y: charactero(16, x, y)):
+for name, surname in run(lambda name, surname: charactero(16, name, surname)):
     print name, surname, "has id 16"
 {% endhighlight %}
 
@@ -633,7 +638,7 @@ for name, surname in run(lambda x, y: charactero(16, x, y)):
 **In [28]:**
 
 {% highlight python %}
-for _id, name in run(lambda x, y: charactero(x, y, 'baratheon')):
+for _id, name in run(lambda _id, name: charactero(_id, name, 'baratheon')):
     print _id, name, "is a 'baratheon'"
 {% endhighlight %}
 
@@ -667,7 +672,7 @@ def id_houseo(house_name, characterid):
 
 {% highlight python %}
 print 'house of baratheon: ',
-for _id, in run(lambda i: id_houseo('baratheon', i)):
+for _id, in run(lambda _id: id_houseo('baratheon', _id)):
     print _id, 
 {% endhighlight %}
 
@@ -830,6 +835,7 @@ correctly the `cons`es
 ## `unify` python lists to conses
 
 I modify (as little as possibile) `unify`, and as a consequence I need to evaluate again `equiv`.
+The objective is to transform lists to conses when we try to unify them to other items.
 
 **In [39]:**
 
@@ -859,6 +865,7 @@ assert unify([1, 2, 3], cons(1, cons(2, cons(3, nil))), SubstitutionMap()) == Su
 
 ## `reify` conses to python lists
 
+I modify `reify` so that conses are reified to usual python lists.
 I need to evaluate again `run` also.
 
 **In [40]:**
@@ -973,7 +980,7 @@ for x in run(lambda x: membero(ten, 30)):
     print x
 {% endhighlight %}
 
-*   find all $$x$$ s.t. 2 is member of `ten`. All $$x$$s are fine here.
+*   find all $$x$$ s.t. 2 is member of `ten`. All $$x$$s are fine here, thus we get a free variable as output.
 
 **In [47]:**
 
@@ -1030,9 +1037,9 @@ for x, y in run(lambda x, y: membero([1, 2, x], [1, y, 3])):
     [1, y, 3] member of [1, 2, x] iff x=[1, free_value(id=1), 3] and y=free_value(id=1)
 
 
-*   and let it generate the whole list
+*   and let it generate the whole list. There are infinite lists containing the item `1`, thus I use the keyword argument `stop` to get just the first three solutions
 
-**In [51]:**
+**In [52]:**
 
 {% highlight python %}
 for (L, ) in run(lambda L: membero(L, 1), stop=3):
@@ -1046,12 +1053,12 @@ for (L, ) in run(lambda L: membero(L, 1), stop=3):
 
 ## `appendo`
 
-`appendo(begin, end, collection)` holds when `collection` is the concatenation of the list `begin`
-and the list `end`.
+`appendo(begin, end, collection)` is the workhorse to build lists.
+It holds when `collection` is the concatenation of the list `begin` and the list `end`.
 
 Note that `conso` is a relation among a scalar and two lists, while `appendo` among three lists.
 
-**In [52]:**
+**In [53]:**
 
 {% highlight python %}
 def appendo(begin, end, collection):
@@ -1071,7 +1078,7 @@ def appendo(begin, end, collection):
 
 It can be used to concatenate lists
 
-**In [53]:**
+**In [54]:**
 
 {% highlight python %}
 for (L, ) in run(lambda L: appendo([1, 2], [3,4], L)):
@@ -1081,23 +1088,21 @@ for (L, ) in run(lambda L: appendo([1, 2], [3,4], L)):
     [1, 2] + [3, 4] = [1, 2, 3, 4]
 
 
-but also to go backwards.
+but also to go backwards. Here we let it determine which is the `head` lists for a given `tail`, `result` pair.
 
-**In [54]:**
+**In [56]:**
 
 {% highlight python %}
-for (head, L) in run(lambda head, L: appendo(head, [3,4], L), stop=5):
-    print '{head} + [3, 4] = {L}'.format(head=head, L=L)
+for (head, ) in run(lambda head: appendo(head, [3,4], [1, 2, 3, 4])):
+    print '{head} + [3, 4] = [1, 2, 3, 4]'.format(head=head)
 {% endhighlight %}
 
-    [] + [3, 4] = [3, 4]
-    [free_value(id=2)] + [3, 4] = [free_value(id=2), 3, 4]
-    [free_value(id=2), free_value(id=5)] + [3, 4] = [free_value(id=2), free_value(id=5), 3, 4]
-    [free_value(id=2), free_value(id=5), free_value(id=8)] + [3, 4] = [free_value(id=2), free_value(id=5), free_value(id=8), 3, 4]
-    [free_value(id=2), free_value(id=5), free_value(id=8), free_value(id=11)] + [3, 4] = [free_value(id=2), free_value(id=5), free_value(id=8), free_value(id=11), 3, 4]
+    [1, 2] + [3, 4] = [1, 2, 3, 4]
 
 
-**In [55]:**
+We can let it generate all the possible ways to split a list in two.
+
+**In [57]:**
 
 {% highlight python %}
 for (head, tail) in run(lambda head, tail: appendo(head, tail, ten)):
@@ -1117,7 +1122,21 @@ for (head, tail) in run(lambda head, tail: appendo(head, tail, ten)):
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] + [] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-Using `appendo` we can easily build arithmetics!
+or let it generate generic lists whose tail is fixed
+
+**In [58]:**
+
+{% highlight python %}
+for (head, L) in run(lambda head, L: appendo(head, [3,4], L), stop=5):
+    print '{head} + [3, 4] = {L}'.format(head=head, L=L)
+{% endhighlight %}
+
+    [] + [3, 4] = [3, 4]
+    [free_value(id=2)] + [3, 4] = [free_value(id=2), 3, 4]
+    [free_value(id=2), free_value(id=5)] + [3, 4] = [free_value(id=2), free_value(id=5), 3, 4]
+    [free_value(id=2), free_value(id=5), free_value(id=8)] + [3, 4] = [free_value(id=2), free_value(id=5), free_value(id=8), 3, 4]
+    [free_value(id=2), free_value(id=5), free_value(id=8), free_value(id=11)] + [3, 4] = [free_value(id=2), free_value(id=5), free_value(id=8), free_value(id=11), 3, 4]
+
 
 [micro]: https://github.com/jasonhemann/microKanren
 [minikanren]: http://minikanren.org/
