@@ -1146,3 +1146,4 @@ for (head, L) in run(lambda head, L: appendo(head, [3,4], L), stop=5):
 [racket]: http://racket-lang.org/
 [core.logic]: https://github.com/clojure/core.logic
 [micro-paper]: http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf
+[cons]: https://en.wikipedia.org/wiki/Cons
