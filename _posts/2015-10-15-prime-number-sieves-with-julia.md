@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Euler 7 problem: prime number sieves with Julia"
+title:  "Euler 7 problem: prime numbers sieves with Julia"
 date:   2015-10-15 11:30
 categories: [julia]
 permalink: /julia/euler7/
@@ -32,7 +32,8 @@ Random interesting features (language + ecosystem):
      When you sign on it, you get some interactive tutorials.
 
 
-This post contains several implementations of the [problem 7 of project Euler][euler7].
+This post contains the implementation of different prime number sieves, which
+can be used to solve [problem 7 of project Euler][euler7].
 
 # Hello, Julia!
 
@@ -58,7 +59,7 @@ The fastest solution is by using a sieve.
 
 ## Upper bound
 
-Before running a sieve, we need to determine the size of the sieve. To do
+Before running a sieve, we need to determine its size. To do
 this, we can apply  https://en.wikipedia.org/wiki/Prime-counting_function#Inequalities
 to determine an upper bound for the nth prime.
 
@@ -78,11 +79,13 @@ end
 
 
 
-Julia has a dynamic type system, but we can add [type annotation][type_doc] to variables, like *ub*, to
-generate more efficient code.
+Julia has a dynamic type system, but we can add [type annotations][type_doc] to
+variables, like *ub*, to generate more efficient code.
 
-Moreover, `get_upper_bound` is a *generic function*. We can write several implementations of it, by adding different
-type specialization of its arguments ([*multimethods*][methods]). Then, Julia chooses the concrete implementation to run by implementing *multiple dispatch*.
+Moreover, `get_upper_bound` is a *generic function*. We can write several
+implementations of it, by adding different type specialization of its arguments
+([*multimethods*][methods]). Then, Julia chooses the concrete implementation
+to run by implementing *multiple dispatch*.
 
 **In [2]:**
 
@@ -100,7 +103,8 @@ ub = get_upper_bound(target_nth_prime)
 
 ## The Sieve data structure
 
-The sieve algorithms work on an array of size $$n$$, s.t. $$v[i]$$ is true if $$i$$ is prime.
+The sieve algorithms work on arrays of size $$n$$, s.t. $$v[i]$$ is true if
+$$i$$ is prime.
 
 Julia provides a very convenient bit array for this purpose.
 
@@ -178,7 +182,8 @@ Macros are not functions, and this is made explicit with the `@` prefix.
 
 ## Sieve of Sundaram
 
-The [sieve of Sundaram][sundaram] is slightly more complex. Compared to Eratosthenes's, it skips even numbers.
+The [sieve of Sundaram][sundaram] is slightly more complex. Compared to
+Eratosthenes's, it skips even numbers.
 
 
 **In [5]:**
@@ -219,10 +224,12 @@ end
 
 ## Sieve of Atkin
 
-The [sieve of Atkin][atkin] is a fast and modern algorithm for prime generation. It **can** be faster than the others,
-depending on how smart is your implementation.
+The [sieve of Atkin][atkin] is a fast and modern algorithm for prime generation.
+It **can** be faster than the others, depending on how smart is your
+implementation.
 
-For the following code, I applied ideas from [this page][implementation].
+For the following code, I applied ideas from [this page][implementation], using
+the full `mod 60` filters from wikipedia.
 
 
 **In [6]:**
@@ -326,15 +333,16 @@ end
 
 
 For the Euler 7 assignment, this implementation is the slowest of the three,
-but we want to benchmark for bigger primes!
+but we want a benchmark on larger primes!
 
 
 # Benchmark
 The function `bench_sieve` takes an ordinal identifying the prime to generate,
 the sieve to use, and the number of runs.
 
-It runs the sieve a first time, just to be sure it is compiled by the Julia interpreter,
-and then it measure the elapsed time as a mean over the specified number of runs.
+It runs the sieve a first time, just to be sure it is compiled by the Julia
+interpreter, and then it measure the elapsed time as a mean over the specified
+number of runs.
 
 **In [7]:**
 
