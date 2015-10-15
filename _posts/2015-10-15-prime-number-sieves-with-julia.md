@@ -16,6 +16,7 @@ tags:
 
 Random interesting features (language + ecosystem):
 
+
 *    designed to be fast
 *    syntax similar to python/ruby
 *    dynamic typing
@@ -29,6 +30,7 @@ Random interesting features (language + ecosystem):
 *    you can create/run your notebooks online on [JuliaBox][juliabox].
      It is able to sync your directories with Google Drive or github repos.
      When you sign on it, you get some interactive tutorials.
+
 
 This post contains several implementations of the [problem 7 of project Euler][euler7].
 
@@ -362,7 +364,7 @@ and whose values are the functions implementing the corresponding algorithm.
 
 Then I run the benchmark, arranging the results in a DataFrame.
 
-**In [None]:**
+**In [8]:**
 
 {% highlight julia %}
 using DataFrames
@@ -378,14 +380,8 @@ end
 
 {% endhighlight %}
 
-**In [None]:**
 
-{% highlight julia %}
-# stack all columns but nths
-melt(df, :nths)
-{% endhighlight %}
-
-**In [None]:**
+**In [9]:**
 
 {% highlight julia %}
 # to install Gadfly
@@ -401,6 +397,8 @@ p = plot(melt(df, :nths), x = :nths,
          Geom.line)
 display(p)
 {% endhighlight %}
+
+![Bench results]({{ site.url }}/assets/sieves/julia_bench.svg)
 
 For larger primes, Atkin is faster than Sundaram.
 
