@@ -15,6 +15,7 @@ tags:
 [Julia][julia] is a high level programming language designed for technical computing.
 
 Random interesting features (language + ecosystem):
+
 *    designed to be fast
 *    syntax similar to python/ruby
 *    dynamic typing
