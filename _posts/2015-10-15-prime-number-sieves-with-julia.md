@@ -398,7 +398,7 @@ p = plot(melt(df, :nths), x = :nths,
 display(p)
 {% endhighlight %}
 
-{% include_relative ({{ site.url }}/assets/sieves/julia_bench.svg %}
+{% include_relative {{ site.url }}/assets/sieves/julia_bench.svg %}
 
 For larger primes, Atkin is faster than Sundaram.
 
