@@ -142,6 +142,9 @@ function eratosthenes_sieve(target_nth)
     for i = 2:root_n
         if sieve[i]
             # this is faster than v[i^2:i:n] = false
+            # we start from i*i since i*(i-1), i*(i-2) etc
+            # have been already marked as false when working
+            # on divisors of (i-1), (i-2) etc
             for j=i^2:i:n
                 sieve[j] = false
             end
@@ -176,7 +179,7 @@ end
 
 
 
-Here we measure the elapsed time by using the macro `time`.
+To measure the elapsed time, I use the macro `time`.
 
 Macros are not functions, and this is made explicit with the `@` prefix.
 
