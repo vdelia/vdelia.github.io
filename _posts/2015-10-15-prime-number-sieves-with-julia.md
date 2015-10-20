@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Euler 7 problem: prime numbers sieves with Julia"
+title:  "Introduction to Julia: Euler 7 problem"
 date:   2015-10-15 11:30
 categories: [julia]
 permalink: /julia/euler7/
