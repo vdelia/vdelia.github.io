@@ -159,17 +159,8 @@ Base.done(s::SundaramSieve, state) = state >= s.ub
 **In [4]:**
 
 {% highlight julia %}
-for i in sundaram_sieve(10)
-    print("$i ")
-end
-
 collect(sundaram_sieve(10))
 {% endhighlight %}
-
-    2 3
-
-
-
 
     4-element Array{Any,1}:
      2
@@ -177,9 +168,6 @@ collect(sundaram_sieve(10))
      5
      7
 
-
-
-    5 7
 
 Another way of implementing lazy evaluated sequences are [coroutines][tasks].
 
