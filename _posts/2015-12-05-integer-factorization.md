@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "About comprehensions, BigInts, Interfaces, Tasks in Julia"
+title:  "About comprehensions, BigInts, Interfaces, Iterators and Tasks in Julia"
 date:   2015-12-05 11:30
 categories: [julia]
 permalink: /julia/primes/
@@ -12,7 +12,7 @@ tags:
 
 ---
 
-This post is the continuation of [the intro to Julia]{% post_url 2015-10-15-prime-number-sieves-with-julia %}.
+This post is the continuation of [the intro to Julia]({% post_url 2015-10-15-prime-number-sieves-with-julia %}).
 
 
 # The notebook
@@ -82,22 +82,22 @@ right [interfaces][interfaces].
 
 Consider for example the _for_ loop
 
-```
+{% highlight python %}
 for i in obj
     do something with i
 end
-```
+{% endhighlight %}
 
 It can work with any object implementing the iteration interface, i.e. the methods
 `start`, `next` and `done`.
 That loop is syntactic sugar equivalent to
 
-```
+{% highlight python %}
 state = start(obj)
 while !done(obj, state)
     i, state = next(obj, state)
 end
-```
+{% endhighlight %}
 
 To define a lazy version of the Sundaram sieve, I create a new [composite type][composite-types],
 containing the `is_prime` array of booleans (a bit array in this implementation), and the upper bound $$ub$$.
@@ -160,7 +160,7 @@ Base.done(s::SundaramSieve, state) = state >= s.ub
 
 {% highlight julia %}
 for i in sundaram_sieve(10)
-    print("$$i ")
+    print("$i ")
 end
 
 collect(sundaram_sieve(10))
@@ -239,9 +239,9 @@ end
 
 {% highlight julia %}
 f5 = fermat(5)
-print("$$f5 = 1")
+print("$f5 = 1")
 for factor in trial_division(f5)
-    print(" * $$factor")
+    print(" * $factor")
 end
 {% endhighlight %}
 
@@ -509,9 +509,9 @@ end
 
 {% highlight julia %}
 test = reduce(*, map(fermat, 1:6))
-print("$$test = 1")
+print("$test = 1")
 for factor in pollard_rho_factorization(test)
-    print(" * $$factor")
+    print(" * $factor")
 end
 {% endhighlight %}
 
@@ -529,9 +529,3 @@ end
 [elliptic_mult]: https://en.m.wikipedia.org/wiki/Elliptic_curve_point_multiplication
 [workspace]: https://github.com/vdelia/juliabox_workspace
 [juliabox]: https://www.juliabox.org/
-
-**In [None]:**
-
-{% highlight julia %}
-
-{% endhighlight %}
