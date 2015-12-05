@@ -308,7 +308,7 @@ It is already able to do more things than our `trial_division`!
 {% highlight julia %}
 f6 = fermat(6)
 x, y = pollard_rho(f6)
-"$$f6 = $$x * $$y"
+"$f6 = $x * $y"
 {% endhighlight %}
 
 
