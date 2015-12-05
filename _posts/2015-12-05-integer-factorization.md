@@ -25,14 +25,14 @@ You can clone it in local, or sync a local folder to it on [JuliaBox][juliabox].
 A [Fermat number][fermat] is a positive integer of the form
 
 
-$F_n = 2 ^ {2^n} + 1$
+$$F_n = 2 ^ {2^n} + 1$$
 
-The only known Fermat number that are also primes are $F_0$, $F_1$, $F_2$, $F_3$, and $F_4$.
+The only known Fermat number that are also primes are $$F_0$$, $$F_1$$, $$F_2$$, $$F_3$$, and $$F_4$$.
 In the following sections, I test two algorithms for prime decomposition on sequences of Fermat numbers.
 
 Julia does not promote automatically from Integer to BigInt.
 Thus, I prefer to explicitly handle overflows:
-if needed, I promote the argument $n$ to `BigInt`, to propagate the BigInt type everywhere.
+if needed, I promote the argument $$n$$ to `BigInt`, to propagate the BigInt type everywhere.
 
 Note that in the following cell I build the array using an **array comprehension**.
 
@@ -68,7 +68,7 @@ fermat(0, 6)
 # Iteration interface and Tasks: Trial Division
 
 The most naive algorithm for integers factorization is [Trial Division][trial]: to find
-the prime factors of $N$, we try to divide it by all prime numbers smaller than  $\sqrt{N}$.
+the prime factors of $$N$$, we try to divide it by all prime numbers smaller than  $$\sqrt{N}$$.
 
 To generate the prime numbers, I use the Sundaram sieve (Cf. [the first post]{% post_url 2015-10-15-prime-number-sieves-with-julia %}), but I exploit the iteration
 interface of Julia to have a lazy implementation of it.
@@ -100,9 +100,9 @@ end
 ```
 
 To define a lazy version of the Sundaram sieve, I create a new [composite type][composite-types],
-containing the `is_prime` array of booleans (a bit array in this implementation), and the upper bound $ub$.
+containing the `is_prime` array of booleans (a bit array in this implementation), and the upper bound $$ub$$.
 
-The type is parametric, since $ub$ can be `Integer` or `BigInt`.
+The type is parametric, since $$ub$$ can be `Integer` or `BigInt`.
 
 **In [2]:**
 
@@ -119,10 +119,10 @@ I use as state the last index checked by the sieve.
 
 I start at 1, so `start` returns 1.
 
-If $p$ is the current state, then `done` is true if there are no more primes between $p$ and $ub$. But to know that, the sieve must have run until $ub$. Thus, we maintain the sieving process one step beyond the prime returned at current iteration:
+If $$p$$ is the current state, then `done` is true if there are no more primes between $$p$$ and $$ub$$. But to know that, the sieve must have run until $$ub$$. Thus, we maintain the sieving process one step beyond the prime returned at current iteration:
 it computes until 7 but it returns 5; the next step it computes until 11 but it returns 7, and so on.
 
-`next` receives the state, which allows to compute the prime it has to return, but it runs one step of the sieve until the next prime, or $ub$.
+`next` receives the state, which allows to compute the prime it has to return, but it runs one step of the sieve until the next prime, or $$ub$$.
 
 **In [3]:**
 
@@ -160,7 +160,7 @@ Base.done(s::SundaramSieve, state) = state >= s.ub
 
 {% highlight julia %}
 for i in sundaram_sieve(10)
-    print("$i ")
+    print("$$i ")
 end
 
 collect(sundaram_sieve(10))
@@ -239,15 +239,15 @@ end
 
 {% highlight julia %}
 f5 = fermat(5)
-print("$f5 = 1")
+print("$$f5 = 1")
 for factor in trial_division(f5)
-    print(" * $factor")
+    print(" * $$factor")
 end
 {% endhighlight %}
 
     4294967297 = 1 * 641 * 6700417
 
-Unfortunately we cannot run this algorithm for bigger $F$s, since we are not able to store the sieve.
+Unfortunately we cannot run this algorithm for bigger $$F$$s, since we are not able to store the sieve.
 
 **In [7]:**
 
@@ -281,7 +281,7 @@ collect(trial_division(fermat(6)))
 
 The function `pollard_rho` is almost a copy&paste from the wikipedia [pseudo-code][rho].
 
-`pollard_rho` finds a divisor for the argument $n$. If it returns $x$ and $y$, s.t. $n = x * y$.
+`pollard_rho` finds a divisor for the argument $$n$$. If it returns $$x$$ and $$y$$, s.t. $$n = x * y$$.
 
 **In [8]:**
 
@@ -320,7 +320,7 @@ It is already able to do more things than our `trial_division`!
 {% highlight julia %}
 f6 = fermat(6)
 x, y = pollard_rho(f6)
-"$f6 = $x * $y"
+"$$f6 = $$x * $$y"
 {% endhighlight %}
 
 
@@ -330,8 +330,8 @@ x, y = pollard_rho(f6)
 
 
 
-What is not able to do is returning all the factors of $n$. To do that, we must recursively apply
-`pollard_rho` to the factors of $n$, if they are different from $n$ and 1.
+What is not able to do is returning all the factors of $$n$$. To do that, we must recursively apply
+`pollard_rho` to the factors of $$n$$, if they are different from $$n$$ and 1.
 
 Those operations can be easily parallelized. In Julia, parallelism starts with [cluster managers][parallel].
 
@@ -509,9 +509,9 @@ end
 
 {% highlight julia %}
 test = reduce(*, map(fermat, 1:6))
-print("$test = 1")
+print("$$test = 1")
 for factor in pollard_rho_factorization(test)
-    print(" * $factor")
+    print(" * $$factor")
 end
 {% endhighlight %}
 
